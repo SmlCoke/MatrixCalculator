@@ -426,4 +426,3 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& m) {
 }
 
 #endif
-
