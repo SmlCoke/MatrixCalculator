@@ -1,0 +1,3 @@
+D:/vscode/Code/C++/MatrixCalculator/build/CMakeFiles/matrix_calculator.dir
+D:/vscode/Code/C++/MatrixCalculator/build/CMakeFiles/edit_cache.dir
+D:/vscode/Code/C++/MatrixCalculator/build/CMakeFiles/rebuild_cache.dir
