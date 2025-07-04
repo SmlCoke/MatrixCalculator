@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = @CMakeFiles/matrix_calculator.dir/includes_CXX.rsp
 
-CXX_FLAGS = -std=gnu++1z
+CXX_FLAGS = -g -std=gnu++1z
 

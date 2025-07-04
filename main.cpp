@@ -14,6 +14,7 @@ int main() {
     std::cout << "Hermite:\n" << M10.to_hermite() << std::endl;
     std::cout << "Hermite:\n" << M10.to_hermite() << std::endl;
     std::cout << "det = " << M10.get_det() << std::endl;
+    std::cout << "det = " << M10.get_det() << std::endl;
     std::cout << "A * A':\n" << M10*M10.to_inv() << std::endl;
     
     return 0;

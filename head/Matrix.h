@@ -12,21 +12,22 @@ private:
     std::vector<std::vector<T>> data;   // 基于vector实现的矩阵
     int rows, cols;                     // 行数与列数
 
-    /*
+    
     // ---------- 缓存部分 ----------
-    mutable bool hermite_cached = false;
-    mutable Matrix<T> cached_hermite;
-
-    mutable bool det_cached = false;
+    // 行列式
+    mutable bool det_ready = false;
     mutable T cached_det;
 
+    // 秩
+    mutable bool rank_ready = false;
+    mutable int cached_rank;
     // 失效机制
     void invalidate_cache() const {
-        hermite_cached = false;
-        det_cached = false;
+        det_ready = false;
+        rank_ready = false;
         // 其他缓存标志也在这里置为 false
     }
-    */
+    
 
     // 对换变换
     void swap_line(int i, int j);   
@@ -40,7 +41,9 @@ private:
 
 public:
     // 构造函数：创建 r 行 c 列的矩阵，元素默认初始化为 T()
-    Matrix(int r, int c) : rows(r), cols(c), data(r, std::vector<T>(c, T())) {}
+    Matrix(int r, int c) : rows(r), cols(c), data(r, std::vector<T>(c, T())) {
+        invalidate_cache();
+    }
     // vector构造函数： vector(len, type)
     // T()：表示默认构造函数
 
@@ -91,8 +94,12 @@ public:
     // 化为厄尔米特标准型(简易版，即不选取主元)
     Matrix<T> to_hermite_mini() const;           
 
+
     // 求行列式
     T get_det() const;
+
+    // 求秩
+    int get_rank() const;
 
     // 求逆
     Matrix<T> to_inv() const;
@@ -102,20 +109,21 @@ public:
 
     // 静态成员函数：生成 r×c 全零矩阵
     static Matrix<T> zeros(int r, int c);
+
+    
 };
 
 
 // 加法操作
 template<typename T>
 Matrix<T> Matrix<T>::operator+(const Matrix<T>& other) const {
-        if (rows != other.rows || cols != other.cols)
-            throw std::invalid_argument("Matrix dimensions must match for addition");
-
-        Matrix<T> result(rows, cols);
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j)
-                result.at(i, j) = this->at(i, j) + other.at(i, j);
-        return result;
+    if (rows != other.rows || cols != other.cols)
+        throw std::invalid_argument("Matrix dimensions must match for addition");
+    Matrix<T> result(rows, cols);
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+            result.at(i, j) = this->at(i, j) + other.at(i, j);
+    return result;
     }
 
 
@@ -241,18 +249,18 @@ int Matrix<T>::Gaussian_Elimination()   {
             }
         }
     }
-    // invalidate_cache(); // 缓存失效
+    
     return swap_times;
 }
 
 // 化为厄尔米特标准型
+// 完成该步骤之后，已经可以求出行列式以及秩，因此本函数的功能不仅限于高斯消元，
+// 同时还会设置缓存
 template<typename T>
 Matrix<T> Matrix<T>::to_hermite() const {            
-    // if (hermite_cached) return cached_hermite;   // 惰性计算
     Matrix<T> res = *this;   // 独立出一个新矩阵
     res.Gaussian_Elimination();
-    // hermite_cached = true;   // 更新缓存
-    // cached_hermite = res;    // 更新缓存
+    
     return res;
 }
 
@@ -292,6 +300,8 @@ Matrix<T> Matrix<T>::to_hermite_mini() const {
     return res;
 }
 
+
+
 // 求行列式
 template<typename T>
 T Matrix<T>::get_det() const {
@@ -301,7 +311,7 @@ T Matrix<T>::get_det() const {
     }
     else
     {
-        // if (det_cached) return cached_det;   // 惰性计算
+        if (det_ready) return cached_det;   // 惰性计算
         Matrix<T> res = *this;   // 独立出一个新矩阵
         int swap_times = 0;      // 纪录对换变换次数
         T det(1);
@@ -314,10 +324,16 @@ T Matrix<T>::get_det() const {
         {
             det = -det;
         }
-        // cached_det = det;   // 更新缓存
-        // det_cached = true;  // 更新缓存
+        cached_det = det;
+        det_ready = true;
         return det;
     } 
+}
+
+// 求秩
+template<typename T>
+int Matrix<T>::get_rank() const {
+    return 0;
 }
 
 // 求逆
@@ -424,5 +440,7 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& m) {
     os << std::endl;
     return os;
 }
+
+
 
 #endif
