@@ -82,9 +82,6 @@ public:
     // 返回的是常量引用，不能通过此函数修改矩阵元素
     // 函数末尾const修饰，表示这是一个常成员函数，函数体内部不允许修改数据成员变量
 
-    
-
-
     // 加法操作
     Matrix<T> operator+(const Matrix<T>& other) const;
 
@@ -101,7 +98,6 @@ public:
     Matrix<T> operator*(const Matrix<T>& other) const;
 
     
-        
     // 化为厄尔米特标准型
     std::vector<std::vector<T>> to_hermite() const;            
     
@@ -130,8 +126,24 @@ public:
     // 求逆矩阵
     std::vector<std::vector<T>> get_inv() const;
 
-    
+    // 求转置矩阵
+    Matrix<T> get_Transpose() const;
 };
+
+// 基于矩阵内容构建矩阵对象
+template<typename T>
+Matrix<T> build_from_data(const std::vector<std::vector<T>>& m_data ) {
+    if (m_data.size() == 0 || m_data[0].size() == 0) {
+        throw std::invalid_argument("Cannot build matrix form empty");
+    }
+    Matrix<T> res(m_data.size(), m_data[0].size());
+    for (int i = 0; i < res.row_count(); i++) {
+        for (int j = 0; j < res.col_count(); j++) {
+            res.at(i, j) = m_data[i][j];
+        }
+    }
+    return res;
+} 
 
 
 // 加法操作
@@ -540,5 +552,15 @@ int Matrix<T>::get_rank() const {
     return cached_rank;
 }
 
-
+// 求转置矩阵
+template<typename T>
+Matrix<T> Matrix<T>::get_Transpose() const {
+    Matrix<T> res(cols, rows);
+    for (int i = 0; i < cols; i ++) {
+        for (int j = 0 ; j < rows; j ++) {
+            res.at(i, j) = data[j][i];
+        }
+    }
+    return res;
+}
 #endif
