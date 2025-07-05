@@ -21,10 +21,22 @@ private:
     // 秩
     mutable bool rank_ready = false;
     mutable int cached_rank;
+
+
+    // Hermite Normal Form
+    mutable bool Hermite_ready = false;
+    mutable std::vector<std::vector<T>> cached_Hermite;
+
+    // inv
+    mutable bool inv_ready = false;
+    mutable std::vector<std::vector<T>> cached_inv;
+    
     // 失效机制
     void invalidate_cache() const {
         det_ready = false;
         rank_ready = false;
+        Hermite_ready = false;
+        inv_ready = false;
         // 其他缓存标志也在这里置为 false
     }
     
@@ -37,11 +49,13 @@ private:
 
     // 高斯消元（只包含前向步骤）
     // 带返回值，返回的是对换变换次数
-    int Gaussian_Elimination();            
+    int Gaussian_Elimination();     // 私有函数，因为是直接操控数据成员 
 
 public:
     // 构造函数：创建 r 行 c 列的矩阵，元素默认初始化为 T()
     Matrix(int r, int c) : rows(r), cols(c), data(r, std::vector<T>(c, T())) {
+        cached_Hermite = std::vector(r, std::vector<T>(c, T()));
+        cached_inv = std::vector(r, std::vector<T>(c, T()));
         invalidate_cache();
     }
     // vector构造函数： vector(len, type)
@@ -89,26 +103,32 @@ public:
     
         
     // 化为厄尔米特标准型
-    Matrix<T> to_hermite() const;            
+    std::vector<std::vector<T>> to_hermite() const;            
     
     // 化为厄尔米特标准型(简易版，即不选取主元)
-    Matrix<T> to_hermite_mini() const;           
+    std::vector<std::vector<T>> to_hermite_mini() const;           
 
-
-    // 求行列式
-    T get_det() const;
-
-    // 求秩
-    int get_rank() const;
 
     // 求逆
-    Matrix<T> to_inv() const;
+    std::vector<std::vector<T>> to_inv() const;
 
     // 静态成员函数：生成 n×n 单位矩阵
     static Matrix<T> identity(int n);
 
     // 静态成员函数：生成 r×c 全零矩阵
     static Matrix<T> zeros(int r, int c);
+    
+    // 求行列式
+    T get_det() const;
+
+    // 求秩
+    int get_rank() const;
+
+    // 求Hermite Normal Form
+    std::vector<std::vector<T>> get_Hermite() const;
+    
+    // 求逆矩阵
+    std::vector<std::vector<T>> get_inv() const;
 
     
 };
@@ -257,16 +277,15 @@ int Matrix<T>::Gaussian_Elimination()   {
 // 完成该步骤之后，已经可以求出行列式以及秩，因此本函数的功能不仅限于高斯消元，
 // 同时还会设置缓存
 template<typename T>
-Matrix<T> Matrix<T>::to_hermite() const {            
+std::vector<std::vector<T>> Matrix<T>::to_hermite() const {            
     Matrix<T> res = *this;   // 独立出一个新矩阵
     res.Gaussian_Elimination();
-    
-    return res;
+    return res.data;
 }
 
 // 化为厄尔米特标准型(简易版，即不选取主元)
 template<typename T>
-Matrix<T> Matrix<T>::to_hermite_mini() const {            
+std::vector<std::vector<T>> Matrix<T>::to_hermite_mini() const {            
     Matrix<T> res = *this;   // 独立出一个新矩阵
     std::vector<int> pivot_index(cols,0);
     for (int i = 0 ; i < cols; i++)
@@ -297,48 +316,15 @@ Matrix<T> Matrix<T>::to_hermite_mini() const {
             }
         }
     }
-    return res;
+    return res.data;
 }
 
 
 
-// 求行列式
-template<typename T>
-T Matrix<T>::get_det() const {
-    if (rows != cols)
-    {
-        throw std::invalid_argument("Only square matrices can be used to find the determinant");
-    }
-    else
-    {
-        if (det_ready) return cached_det;   // 惰性计算
-        Matrix<T> res = *this;   // 独立出一个新矩阵
-        int swap_times = 0;      // 纪录对换变换次数
-        T det(1);
-        swap_times = res.Gaussian_Elimination();
-        for (int i = 0 ; i < rows; i++)
-        {
-            det = det*res.at(i,i);
-        }
-        if (swap_times%2 == 1)          // 兑换变换次数为奇数则行列式取反
-        {
-            det = -det;
-        }
-        cached_det = det;
-        det_ready = true;
-        return det;
-    } 
-}
-
-// 求秩
-template<typename T>
-int Matrix<T>::get_rank() const {
-    return 0;
-}
 
 // 求逆
 template<typename T>
-Matrix<T> Matrix<T>::to_inv() const {
+std::vector<std::vector<T>> Matrix<T>::to_inv() const {
     if (this->rows != this->cols) {
         throw std::invalid_argument("Only square matrices have inverse_matrix");
     }
@@ -408,7 +394,7 @@ Matrix<T> Matrix<T>::to_inv() const {
             }
         }
     }
-    return inv;  
+    return inv.data;  
 }
 
 // 静态成员函数：生成 n×n 单位矩阵
@@ -441,6 +427,118 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& m) {
     return os;
 }
 
+// 重载std::vector<std::vector<T>>的输出数据流
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<std::vector<T>> & m_data) {
+    int rows = m_data.size();
+    int cols = m_data[0].size();
+    for (int i = 0; i < rows; ++i) {
+        os << "| ";
+        for (int j = 0; j < cols; ++j) {
+            os << m_data[i][j] << " ";
+        }
+        os << "|" << std::endl;
+    }
+    os << std::endl;
+    return os;
+}
+
+// 求Hermite Normal Form
+template<typename T>
+std::vector<std::vector<T>> Matrix<T>::get_Hermite() const { 
+    if (Hermite_ready) return cached_Hermite;  // 惰性计算
+    Hermite_ready = true;
+    cached_Hermite = to_hermite();
+
+    // 缓存行列式
+    T det(1);
+    if (rows == cols) {
+        for (int i = 0; i < rows; i++ ) {
+            det = det*cached_Hermite[i][i];
+        }
+    }
+    det_ready = true;
+    cached_det = det;
+
+    // 缓存秩
+    int rank = 0;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) { 
+            if (!(cached_Hermite[i][j] == T())) {
+                rank++;
+                break;
+            }
+        }
+    }
+    cached_rank = rank;
+    rank_ready = true;
+
+    return cached_Hermite;
+}
+
+// 求逆矩阵
+template<typename T>
+std::vector<std::vector<T>> Matrix<T>::get_inv() const {
+    if (inv_ready) return cached_inv;   // 惰性计算
+    inv_ready = true;
+    cached_inv = to_inv();
+    return cached_inv;
+
+} 
+
+// 求行列式
+template<typename T>
+T Matrix<T>::get_det() const {
+    if (rows != cols)
+    {
+        throw std::invalid_argument("Only square matrices can be used to find the determinant");
+    }
+    else
+    {
+        if (det_ready) return cached_det;   // 惰性计算
+        Matrix<T> res = *this;   // 独立出一个新矩阵
+        int swap_times = 0;      // 纪录对换变换次数
+        T det(1);
+        swap_times = res.Gaussian_Elimination();
+        for (int i = 0 ; i < rows; i++)
+        {
+            det = det*res.at(i,i);
+        }
+        if (swap_times%2 == 1)          // 兑换变换次数为奇数则行列式取反
+        {
+            det = -det;
+        }
+        cached_det = det;
+        det_ready = true;
+
+        // 缓存Hermite Norm Form
+        Hermite_ready = true;
+        cached_Hermite = res.data;
+
+        // 缓存秩
+        int rank = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) { 
+                if (!(cached_Hermite[i][j] == T())) {
+                    rank++;
+                    break;
+                }
+            }
+        }
+        cached_rank = rank;
+        rank_ready = true;
+
+        return det;
+    } 
+}
+
+// 求秩
+template<typename T>
+int Matrix<T>::get_rank() const {
+    if (rank_ready) return cached_rank;
+    std::vector<std::vector<T>> Hermite = get_Hermite(); // 调用厄尔米特标准型后，自动完成秩的缓存
+    return cached_rank;
+}
 
 
 #endif
