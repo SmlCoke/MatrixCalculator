@@ -128,6 +128,9 @@ public:
 
     // 求转置矩阵
     Matrix<T> get_Transpose() const;
+
+    // 求解线性方程组Ax=b（方阵情况）
+    std::vector<T> pha_solve(const std::vector<T> & Din) const;
 };
 
 // 基于矩阵内容构建矩阵对象
@@ -455,6 +458,17 @@ std::ostream& operator<<(std::ostream& os, const std::vector<std::vector<T>> & m
     return os;
 }
 
+// 重载std::vector<T>的输出数据流
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T> & v_data) {
+    int sizes = v_data.size();
+    for (int i = 0; i < sizes; ++i) {
+        os << v_data[i] << " ";
+    }
+    os << std::endl;
+    return os;
+}
+
 // 求Hermite Normal Form
 template<typename T>
 std::vector<std::vector<T>> Matrix<T>::get_Hermite() const { 
@@ -562,5 +576,23 @@ Matrix<T> Matrix<T>::get_Transpose() const {
         }
     }
     return res;
+}
+
+
+
+// 求解线性方程组Ax=b(对于方阵)
+template<typename T>
+std::vector<T> Matrix<T>::pha_solve(const std::vector<T> & Din) const {
+    if (this->rows != this->cols) throw std::invalid_argument("This func can only process phalanx case.");
+    if (Din.size() != this->cols) throw std::invalid_argument("N of cols of Matrix != length of input.");
+    std::vector<std::vector<T>>inv = this->get_inv();
+    std::vector<T> solution(rows, T(0));
+    for (int i = 0 ; i < rows; i ++) {
+        for (int j = 0; j < cols; j++) {
+            solution[i] = solution[i] + inv[i][j] * Din[j];
+        }
+    }
+    return solution;
+    
 }
 #endif
