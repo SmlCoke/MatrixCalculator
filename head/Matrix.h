@@ -389,7 +389,7 @@ std::vector<std::vector<T>> Matrix<T>::to_inv() const {
         }  
     }  // 到此已经化为了Hermite Normal Form
     for (int i = 0; i < rows; i++)   {  // 将主元化为1
-        T pivot = res.at(i, i).to_reciprocal();  // 缩放因子
+        T pivot = T(1)/res.at(i, i);  // 缩放因子
         res.Multip(i, pivot,i);
         inv.Multip(i, pivot,0);
     }        
