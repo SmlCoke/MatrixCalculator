@@ -27,6 +27,9 @@ public:
     friend std::ostream& operator<<(std::ostream&, const Rational&);  // 重载输出数据流
     friend Rational abs(const Rational&);       // 取绝对值
     static const Rational Zero;  // 声明静态常量成员
+
+    int get_num() const;  // 取分子
+    int get_denom() const; // 取分母
 };
 
 #endif

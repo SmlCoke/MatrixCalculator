@@ -134,3 +134,13 @@ bool Rational::operator<(const Rational& other) const {
 Rational abs(const Rational& other) {
     return (other.num < 0) ? Rational(-other.num, other.denom) : other;
 }
+
+// 取分子
+int Rational::get_num() const {
+    return num;
+}
+
+// 取分母
+int Rational::get_denom() const {
+    return denom;
+}

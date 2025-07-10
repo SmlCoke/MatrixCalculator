@@ -29,5 +29,7 @@ int main() {
     std::cout << "T:\n" << M9.get_Transpose() << std::endl;
     std::vector<Rational> input(3,1);
     std::cout << "solution of [1, 1, 1]:\n" << M9.pha_solve(input) << std::endl;
+    input[0]=Rational(4); input[1]=Rational(2); input[2]=Rational(0);
+    std::cout << "solution of [4, 2, 0]:\n" << M9.pha_solve(input) << std::endl;
     return 0;
 }
