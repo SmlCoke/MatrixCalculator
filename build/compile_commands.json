@@ -10,5 +10,11 @@
   "command": "D:\\vscode\\mingw64\\bin\\c++.exe  @CMakeFiles/matrix_calculator.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\matrix_calculator.dir\\source\\Rational.cpp.obj -c D:\\vscode\\Code\\C++\\MatrixCalculator\\source\\Rational.cpp",
   "file": "D:/vscode/Code/C++/MatrixCalculator/source/Rational.cpp",
   "output": "CMakeFiles/matrix_calculator.dir/source/Rational.cpp.obj"
+},
+{
+  "directory": "D:/vscode/Code/C++/MatrixCalculator/build",
+  "command": "D:\\vscode\\mingw64\\bin\\c++.exe  @CMakeFiles/matrix_calculator.dir/includes_CXX.rsp -g -std=gnu++1z -o CMakeFiles\\matrix_calculator.dir\\source\\AlgebraicNumber.cpp.obj -c D:\\vscode\\Code\\C++\\MatrixCalculator\\source\\AlgebraicNumber.cpp",
+  "file": "D:/vscode/Code/C++/MatrixCalculator/source/AlgebraicNumber.cpp",
+  "output": "CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.obj"
 }
 ]

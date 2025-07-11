@@ -1,5 +1,7 @@
-CMakeFiles/matrix_calculator.dir/main.cpp.obj: \
- D:\vscode\Code\C++\MatrixCalculator\main.cpp \
+CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.obj: \
+ D:\vscode\Code\C++\MatrixCalculator\source\AlgebraicNumber.cpp \
+ D:/vscode/Code/C++/MatrixCalculator/head/AlgebraicNumber.h \
+ D:/vscode/Code/C++/MatrixCalculator/head/Rational.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/c++config.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/os_defines.h \
@@ -119,10 +121,8 @@ CMakeFiles/matrix_calculator.dir/main.cpp.obj: \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ostream.tcc \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/istream \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/istream.tcc \
- D:\vscode\Code\C++\MatrixCalculator\head/Rational.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/numeric \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_numeric.h \
- D:\vscode\Code\C++\MatrixCalculator\head/Matrix.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/vector \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_construct.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_uninitialized.h \
@@ -131,8 +131,6 @@ CMakeFiles/matrix_calculator.dir/main.cpp.obj: \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_vector.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_bvector.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/vector.tcc \
- D:\vscode\Code\C++\MatrixCalculator\head/AlgebraicNumber.h \
- D:\vscode\Code\C++\MatrixCalculator\head/Rational.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
  D:/vscode/mingw64/x86_64-w64-mingw32/include/math.h \
  D:/vscode/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/specfun.h \

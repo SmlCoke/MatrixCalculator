@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "D:/vscode/Code/C++/MatrixCalculator/main.cpp" "CMakeFiles/matrix_calculator.dir/main.cpp.obj" "gcc" "CMakeFiles/matrix_calculator.dir/main.cpp.obj.d"
+  "D:/vscode/Code/C++/MatrixCalculator/source/AlgebraicNumber.cpp" "CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.obj" "gcc" "CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.obj.d"
   "D:/vscode/Code/C++/MatrixCalculator/source/Rational.cpp" "CMakeFiles/matrix_calculator.dir/source/Rational.cpp.obj" "gcc" "CMakeFiles/matrix_calculator.dir/source/Rational.cpp.obj.d"
   )
 

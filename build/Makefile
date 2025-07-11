@@ -152,6 +152,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\matrix_calculator.dir\build.make CMakeFiles/matrix_calculator.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+source/AlgebraicNumber.obj: source/AlgebraicNumber.cpp.obj
+.PHONY : source/AlgebraicNumber.obj
+
+# target to build an object file
+source/AlgebraicNumber.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\matrix_calculator.dir\build.make CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.obj
+.PHONY : source/AlgebraicNumber.cpp.obj
+
+source/AlgebraicNumber.i: source/AlgebraicNumber.cpp.i
+.PHONY : source/AlgebraicNumber.i
+
+# target to preprocess a source file
+source/AlgebraicNumber.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\matrix_calculator.dir\build.make CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.i
+.PHONY : source/AlgebraicNumber.cpp.i
+
+source/AlgebraicNumber.s: source/AlgebraicNumber.cpp.s
+.PHONY : source/AlgebraicNumber.s
+
+# target to generate assembly for a file
+source/AlgebraicNumber.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\matrix_calculator.dir\build.make CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.s
+.PHONY : source/AlgebraicNumber.cpp.s
+
 source/Rational.obj: source/Rational.cpp.obj
 .PHONY : source/Rational.obj
 
@@ -188,6 +212,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... source/AlgebraicNumber.obj
+	@echo ... source/AlgebraicNumber.i
+	@echo ... source/AlgebraicNumber.s
 	@echo ... source/Rational.obj
 	@echo ... source/Rational.i
 	@echo ... source/Rational.s

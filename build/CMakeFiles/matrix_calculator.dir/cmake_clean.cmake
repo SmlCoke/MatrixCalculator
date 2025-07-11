@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/matrix_calculator.dir/main.cpp.obj"
   "CMakeFiles/matrix_calculator.dir/main.cpp.obj.d"
+  "CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.obj"
+  "CMakeFiles/matrix_calculator.dir/source/AlgebraicNumber.cpp.obj.d"
   "CMakeFiles/matrix_calculator.dir/source/Rational.cpp.obj"
   "CMakeFiles/matrix_calculator.dir/source/Rational.cpp.obj.d"
   "libmatrix_calculator.dll.a"
