@@ -30,6 +30,10 @@ private:
     // inv
     mutable bool inv_ready = false;
     mutable std::vector<std::vector<T>> cached_inv;
+
+    // RREF
+    mutable bool RREF_ready = false;
+    mutable std::vector<std::vector<T>> cached_RREF; 
     
     // 失效机制
     void invalidate_cache() const {
@@ -37,6 +41,7 @@ private:
         rank_ready = false;
         Hermite_ready = false;
         inv_ready = false;
+        RREF_ready = false;
         // 其他缓存标志也在这里置为 false
     }
     
@@ -108,6 +113,9 @@ public:
     // 求逆
     std::vector<std::vector<T>> to_inv() const;
 
+    // 求简化阶梯型RREF
+    std::vector<std::vector<T>> to_RREF() const;
+
     // 静态成员函数：生成 n×n 单位矩阵
     static Matrix<T> identity(int n);
 
@@ -129,8 +137,16 @@ public:
     // 求转置矩阵
     Matrix<T> get_Transpose() const;
 
+    // 求行简化阶梯型
+    std::vector<std::vector<T>> get_RREF() const;
+
     // 求解线性方程组Ax=b（方阵情况）
     std::vector<T> pha_solve(const std::vector<T> & Din) const;
+
+    // 求零空间（即线性齐次方程组的解空间）
+    std::vector<std::vector<T>> get_null() const;
+
+    
 };
 
 // 基于矩阵内容构建矩阵对象
@@ -594,5 +610,63 @@ std::vector<T> Matrix<T>::pha_solve(const std::vector<T> & Din) const {
     }
     return solution;
     
+}
+
+
+// 计算简化阶梯型RREF
+template<typename T>
+std::vector<std::vector<T>> Matrix<T>::to_RREF() const {
+    int flag = cols;  // 标记首个非零行
+    std::vector<std::vector<T>> res = get_Hermite();  // 从厄尔米特标准型开始化简
+    for (int i = rows - 1; i >=0; i--) {
+        for (int j = i; j < cols; j++) {
+            if (!(res[i][j]==T())) {// 找到非零元
+                for (int l = j + 1; l < cols; l++) {
+                    res[i][l] = res[i][l]/res[i][j];   // 将主元化为1
+                }
+                res[i][j] = T(1);
+                for (int k = i - 1; k >=0; k--) {  // 高斯消元的后向步骤
+                    T factor = res[k][j];  // 倍加因子
+                    for (int l = j; l < cols; l++) {
+                        res[k][l] = res[k][l] - factor * res[i][l];
+                    }
+                }
+                break;
+            }
+            if (j == cols - 1) { // 找到末尾还没找到非零元
+                flag--;
+            }
+        }
+    }
+    cached_rank = flag;   // 首个全零行索引即非零行个数，也即矩阵的秩
+    rank_ready = true;
+    return res;
+}
+
+// 求简化阶梯型RREF
+template<typename T>
+std::vector<std::vector<T>> Matrix<T>::get_RREF() const {
+    if (RREF_ready) return cached_RREF;   // 惰性计算
+    cached_RREF = to_RREF();
+    RREF_ready = true;
+    return cached_RREF;
+}
+
+
+// 求零空间（即线性齐次方程组的解空间）
+template<typename T>
+std::vector<std::vector<T>> Matrix<T>::get_null() const {
+    int rank = get_rank();
+    if (rank == cols) return std::vector(cols,std::vector(1,T()));            
+    int n_null = cols - rank;        // 基础解系维度 = n - 列空间维度   
+    std::vector<std::vector<T>> res = std::vector(cols-rank,std::vector(cols,T()));
+    std::vector<std::vector<T>> rref = get_RREF();
+    for (int j = 0; j < cols-rank; j++) { // 扫描列
+        for (int i = 0; i < rank; i++) { // 扫描行（变量列向量的行）
+            res[j][i] = -rref[i][j+rank];  // 非自由变量取反系数
+        }
+        res[j][j+rank] = T(1);           // 自由变量取1
+    }
+    return res;
 }
 #endif

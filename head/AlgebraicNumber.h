@@ -1,12 +1,11 @@
-#ifndef ALGEBRAICNUMBER_H
-#define ALGEBRAICNUMBER_H
-#include "Rational.h"
-#include <vector>
 // “代数数”类
 // 代数数的解析定义为任何整系数多项式的复数根，体现为有理数与根式项组的加和
 // 本类仅仅实现实代数数
 
-
+#ifndef ALGEBRAICNUMBER_H
+#define ALGEBRAICNUMBER_H
+#include "Rational.h"
+#include <vector>
 #pragma once
 #include <iostream>
 #include <cmath>
@@ -35,12 +34,18 @@ struct RadicalTerm {
     //  重载运算符（用于排序、比较、等价）
     bool operator==(const RadicalTerm& other) const;
     bool operator<(const RadicalTerm& other) const;
+    bool operator>(const RadicalTerm& other) const;
 
     //  重载输出
     friend std::ostream& operator<<(std::ostream& os, const RadicalTerm& t);
+    
+    // 重载乘除
+    RadicalTerm operator*(const RadicalTerm& other) const;
+    RadicalTerm operator/(const RadicalTerm& other) const;
 };
 
 
+/*
 class AlgebraicNumber {
 private:
     std::vector<RadicalTerm> terms;  // 所有根式项线性组合
@@ -66,5 +71,5 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const AlgebraicNumber& a);
 };
-
+*/
 #endif
