@@ -747,6 +747,23 @@ std::vector<std::vector<T>> Matrix<T>::solve(const std::vector<T>& Din) const {
             res_index++;
         }
     }
+
+    // 可选：打印解
+    std::vector<int> no_pivot(n_null, 0);  // 标记自由变量位置
+    int no_pivot_index = 0;
+    for (int i = 0 ; i < cols; i++) {
+        if (pivot_flag[i]==0) no_pivot[no_pivot_index++] = i;
+    }
+    for (int index = 0; index < cols; index++) {
+        std::cout << "x" << index+1 << " = ";
+        if (!(res[0][index]==T())) std::cout << res[0][index];
+        for (int j = 0 ; j < n_null; j++) {
+            if (res[j+1][index] == T()) continue;
+            if (res[j+1][index] == T(1)) std::cout << "+x" << no_pivot[j]+1;
+            else std::cout << "+(" << res[j+1][index] << ")x" << no_pivot[j]+1;
+        } 
+        std::cout << std::endl;
+    }
     return res;
 }
 
