@@ -146,6 +146,9 @@ public:
     // 求零空间（即线性齐次方程组的解空间）
     std::vector<std::vector<T>> get_null() const;
 
+    // 求解空间
+    std::vector<std::vector<T>> solve(const std::vector<T>& Din) const;
+
     
 };
 
@@ -481,7 +484,6 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T> & v_data) {
     for (int i = 0; i < sizes; ++i) {
         os << v_data[i] << " ";
     }
-    os << std::endl;
     return os;
 }
 
@@ -616,7 +618,7 @@ std::vector<T> Matrix<T>::pha_solve(const std::vector<T> & Din) const {
 // 计算简化阶梯型RREF
 template<typename T>
 std::vector<std::vector<T>> Matrix<T>::to_RREF() const {
-    int flag = cols;  // 标记首个非零行
+    // int flag = cols;  // 标记首个非零行
     std::vector<std::vector<T>> res = get_Hermite();  // 从厄尔米特标准型开始化简
     for (int i = rows - 1; i >=0; i--) {
         for (int j = i; j < cols; j++) {
@@ -633,13 +635,13 @@ std::vector<std::vector<T>> Matrix<T>::to_RREF() const {
                 }
                 break;
             }
-            if (j == cols - 1) { // 找到末尾还没找到非零元
-                flag--;
-            }
+            // if (j == cols - 1) { // 找到末尾还没找到非零元
+            //     flag--;
+            // }
         }
     }
-    cached_rank = flag;   // 首个全零行索引即非零行个数，也即矩阵的秩
-    rank_ready = true;
+    // cached_rank = flag;   // 首个全零行索引即非零行个数，也即矩阵的秩
+    // rank_ready = true;
     return res;
 }
 
@@ -659,14 +661,93 @@ std::vector<std::vector<T>> Matrix<T>::get_null() const {
     int rank = get_rank();
     if (rank == cols) return std::vector(cols,std::vector(1,T()));            
     int n_null = cols - rank;        // 基础解系维度 = n - 列空间维度   
-    std::vector<std::vector<T>> res = std::vector(cols-rank,std::vector(cols,T()));
+    std::vector<std::vector<T>> res = std::vector(n_null,std::vector(cols,T()));
     std::vector<std::vector<T>> rref = get_RREF();
-    for (int j = 0; j < cols-rank; j++) { // 扫描列
-        for (int i = 0; i < rank; i++) { // 扫描行（变量列向量的行）
-            res[j][i] = -rref[i][j+rank];  // 非自由变量取反系数
+    std::vector<int> pivot_flag(cols, 0);   // 标记该变量是否是主元
+    std::vector<int> pivot_index(rank, 0);   // 标记该行的主元索引
+    for (int i = 0; i < rank; i++) {
+        int j = i;
+        while(rref[i][j]==T()) j++;
+        pivot_flag[j] = 1;   // 记录：该变量是主元
+        pivot_index[i] = j;  // 记录：该行的主元位置
+    }
+    int res_index = 0; // 开始构造基础解系
+    for (int j = 0 ; j < cols; j++) {
+        if (pivot_flag[j] == 0) {
+            res[res_index][j] = T(1);
+            for (int i = 0 ; i < rank; i++) {
+                res[res_index][pivot_index[i]] = -rref[i][j];
+            }
+            res_index++;
         }
-        res[j][j+rank] = T(1);           // 自由变量取1
     }
     return res;
 }
+
+// 求解空间
+template<typename T>
+std::vector<std::vector<T>> Matrix<T>::solve(const std::vector<T>& Din) const {
+    if (Din.size() != rows) throw std::invalid_argument("b must have the same length as matrix.");
+    Matrix<T> Aug_ma(rows, cols+1);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            Aug_ma.at(i,j) = at(i,j);
+        }
+        Aug_ma.at(i,cols) = Din[i];
+    }
+    // std::cout << "Aug_ma:\n" << Aug_ma << std::endl;
+    std::vector<std::vector<T>> rref = Aug_ma.get_RREF();
+    // std::cout << "Aug_rref:\n" << rref << std::endl;
+    
+
+    // 检测方程组是否无解
+    bool flag = true;
+    int rank = 0;
+    for (int i = 0; i < rows; i++) {
+        int j = 0;
+        for (j = 0; j < cols; j++) {
+            if (!(rref[i][j] == T())) {
+                rank++;
+                break;
+            }
+        }
+        if (j == cols && !(rref[i][cols] == T())) {
+            flag = false;
+            break;
+        }
+     }
+
+    if (!flag) return {};
+
+    // 初始化解空间
+    int n_null = cols - rank;
+    std::vector<std::vector<T>> res(n_null+1, std::vector<T>(cols, T())); 
+    std::vector<int> pivot_flag(cols, 0);   // 标记该变量是否是主元
+    std::vector<int> pivot_index(rank, 0);   // 标记该行的主元索引
+    for (int i = 0; i < rank; i++) {
+        int j = i;
+        while(rref[i][j]==T()) j++;
+        pivot_flag[j] = 1;   // 记录：该变量是主元
+        pivot_index[i] = j;  // 记录：该行的主元位置
+    }
+
+    // 特解
+    for (int i = 0; i < rank; i++) {
+        res[0][pivot_index[i]] = rref[i][cols];
+    }
+
+    // 齐次解
+    int res_index = 1; // 开始构造基础解系
+    for (int j = 0 ; j < cols; j++) {
+        if (pivot_flag[j] == 0) {
+            res[res_index][j] = T(1);
+            for (int i = 0 ; i < rank; i++) {
+                res[res_index][pivot_index[i]] = -rref[i][j];
+            }
+            res_index++;
+        }
+    }
+    return res;
+}
+
 #endif

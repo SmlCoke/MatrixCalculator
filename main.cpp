@@ -33,22 +33,26 @@ int main() {
     input[0]=Rational(4); input[1]=Rational(2); input[2]=Rational(0);
     std::cout << "solution of [4, 2, 0]:\n" << M9.pha_solve(input) << std::endl;
     */
-    std::vector<std::vector<Rational>> data(4, std::vector<Rational>(4, Rational(0)));
-    data[0][0] = Rational(1); data[0][1] = Rational(2); data[0][2] = Rational(3); data[0][3] = Rational(4); 
-    data[1][0] = Rational(0); data[1][1] = Rational(1); data[1][2] = Rational(2); data[1][3] = Rational(3);
-    data[2][0] = Rational(1); data[2][1] = Rational(1); data[2][2] = Rational(1); data[2][3] = Rational(1);
-    data[2][0] = Rational(0); data[2][1] = Rational(0); data[2][2] = Rational(1); data[2][3] = Rational(2);
-    Matrix<Rational> M = build_from_data(data);
-    std::cout << "RREF of M9:\n" << M.get_RREF() << std::endl;
-    std::cout << "Null_solu of M9: \n" << M.get_null() << std::endl;
+    // std::vector<std::vector<Rational>> data(4, std::vector<Rational>(4, Rational(0)));
+    // data[0][0] = Rational(1); data[0][1] = Rational(2); data[0][2] = Rational(3); data[0][3] = Rational(4); 
+    // data[1][0] = Rational(0); data[1][1] = Rational(1); data[1][2] = Rational(2); data[1][3] = Rational(3);
+    // data[2][0] = Rational(1); data[2][1] = Rational(1); data[2][2] = Rational(1); data[2][3] = Rational(1);
+    // data[2][0] = Rational(0); data[2][1] = Rational(0); data[2][2] = Rational(1); data[2][3] = Rational(2);
+    // Matrix<Rational> M = build_from_data(data);
+    // std::cout << "RREF of M9:\n" << M.get_RREF() << std::endl;
+    // std::cout << "Null_solu of M9: \n" << M.get_null() << std::endl;
 
     std::vector<std::vector<Rational>> data2(4, std::vector<Rational>(4, Rational(0)));
-    data2[0][0] = Rational(1); data2[0][1] = Rational(0); data2[0][2] = Rational(-1); data2[0][3] = Rational(-2); 
-    data2[1][0] = Rational(0); data2[1][1] = Rational(1); data2[1][2] = Rational(2); data2[1][3] = Rational(3);
-    data2[2][0] = Rational(1); data2[2][1] = Rational(1); data2[2][2] = Rational(1); data2[2][3] = Rational(1);
-    data2[2][0] = Rational(0); data2[2][1] = Rational(0); data2[2][2] = Rational(0); data2[2][3] = Rational(0);
+    data2[0][0] = Rational(1); data2[0][1] = Rational(2); data2[0][2] = Rational(3); data2[0][3] = Rational(4); 
+    data2[1][0] = Rational(2); data2[1][1] = Rational(5); data2[1][2] = Rational(8); data2[1][3] = Rational(11);
+    data2[2][0] = Rational(-1); data2[2][1] = Rational(-1); data2[2][2] = Rational(-1); data2[2][3] = Rational(-1);
+    // data2[2][0] = Rational(0); data2[2][1] = Rational(0); data2[2][2] = Rational(0); data2[2][3] = Rational(0);
     Matrix<Rational> M2 = build_from_data(data2);
-    std::cout << "RREF of M9:\n" << M2.get_RREF() << std::endl;
-    std::cout << "Null_solu of M9:\n" << M2.get_null() << std::endl;
+    std::cout << "M2:\n" << M2 << std::endl;
+    std::cout << "RREF of M2:\n" << M2.get_RREF() << std::endl;
+    std::cout << "Null_solu of M2:\n" << M2.get_null() << std::endl;
+    std::vector<Rational> b = std::vector<Rational>(4,Rational());
+    b[0] = Rational(5); b[1] = Rational(13); b[2] = Rational(-2); b[3] = Rational(0);
+    std::cout << "solu of M2 and " << b << ":\n" << M2.solve(b) << std::endl;
     return 0;
 }
